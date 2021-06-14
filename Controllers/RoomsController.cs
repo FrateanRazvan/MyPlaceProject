@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MyPlace.Data;
 using MyPlace.Models;
+using MyPlace.ViewModels;
 
 namespace MyPlace.Controllers
 {
@@ -17,11 +19,13 @@ namespace MyPlace.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<RoomsController> _logger;
+        private readonly IMapper _mapper;
 
-        public RoomsController(ApplicationDbContext context, ILogger<RoomsController> logger)
+        public RoomsController(ApplicationDbContext context, ILogger<RoomsController> logger, IMapper mapper)
         {
             _context = context;
             _logger = logger;
+            _mapper = mapper;
         }
 
         // GET: api/Rooms
@@ -33,7 +37,7 @@ namespace MyPlace.Controllers
 
         // GET: api/Rooms/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Room>> GetRoom(int id)
+        public async Task<ActionResult<RoomViewModel>> GetRoom(int id)
         {
             var room = await _context.Rooms.FindAsync(id);
 
@@ -42,24 +46,21 @@ namespace MyPlace.Controllers
                 return NotFound();
             }
 
-            return room;
+            var roomViewModel = _mapper.Map<RoomViewModel>(room);
+
+            return roomViewModel;
         }
 
+        //GET: api/Rooms/1/Comments
         [HttpGet("{id}/Comments")]
-        public ActionResult<IEnumerable<Object>> GetCommentsForRoom(int id)
-        {   
-            //test with anonimous Model View
-            var query = _context.Comments.Where(c => c.Room.Id == id).Include(c => c.Room).Select(c => new
-            {
-                RoomNumber = c.Room.RoomNumber,
-                Comment = c.Content
-            });
-
-            _logger.LogInformation(query.ToQueryString());
-
+        public ActionResult<IEnumerable<RoomWithCommentsViewModel>> GetCommentsForRoom(int id)
+        {
+            
+            var query = _context.Rooms.Where(room => room.Id == id).Include(room => room.Comments).Select(room => _mapper.Map<RoomWithCommentsViewModel>(room));
             return query.ToList();
         }
 
+        //POST: api/Rooms/1/Comments
         [HttpPost("{id}/Comments")]
         public IActionResult PostCommentForRoom(int id, Comment comment)
         {
