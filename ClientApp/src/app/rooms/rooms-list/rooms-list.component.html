@@ -1,0 +1,22 @@
+<h1 id="tableLabel">Rooms</h1>
+
+<p>Total rooms of the Health Center</p>
+
+<p *ngIf="!rooms"><em>Loading...</em></p>
+
+<table class='table table-striped' aria-labelledby="tableLabel" *ngIf="rooms">
+  <thead>
+    <tr>
+      <th>Room_Number</th>
+      <th>Room size</th>
+      <th>Rented</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let room of rooms">
+      <td>{{ room.roomNumber }}</td>
+      <td>{{ room.roomSize }}</td>
+      <td>{{ room.isOcupied }}</td>
+    </tr>
+  </tbody>
+</table>
