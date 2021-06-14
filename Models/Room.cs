@@ -10,6 +10,7 @@ namespace MyPlace.Models
         public int Id { get; set; }
         public int RoomNumber { get; set; }
         public string RoomSize { get; set; }
-        public bool isOcupied { get; set; }
+        public bool IsOcupied { get; set; }
+        public List<Comment> Comments { get; set; }
     }
 }
