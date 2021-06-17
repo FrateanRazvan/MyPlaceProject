@@ -113,8 +113,9 @@ namespace MyPlace.Controllers
         // POST: api/Rooms
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Room>> PostRoom(Room room)
+        public async Task<ActionResult<RoomViewModel>> PostRoom(RoomViewModel roomRequest)
         {
+            Room room = _mapper.Map<Room>(roomRequest);
             _context.Rooms.Add(room);
             await _context.SaveChangesAsync();
 

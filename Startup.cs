@@ -1,3 +1,5 @@
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -13,7 +15,11 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MyPlace.Data;
 using MyPlace.Models;
+using MyPlace.Validators;
+using MyPlace.ViewModels;
 using System;
+using System.IO;
+using System.Reflection;
 using System.Text;
 
 namespace MyPlace
@@ -30,8 +36,6 @@ namespace MyPlace
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.AddAutoMapper(typeof(MappingProfile));
-
             services.AddAutoMapper(typeof(MappingProfile));
 
             services.AddDbContext<ApplicationDbContext>(options =>
@@ -64,7 +68,8 @@ namespace MyPlace
                         };
                     }
                 );
-            services.AddControllersWithViews();
+            services.AddControllersWithViews()
+                .AddFluentValidation();
             services.AddRazorPages();
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
@@ -94,7 +99,14 @@ namespace MyPlace
                         Url = new Uri("https://example.com/license"),
                     }
                 });
+
+                // Set the comments path for the Swagger JSON and UI.
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
             });
+
+            services.AddTransient<IValidator<RoomViewModel>, RoomValidator>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
