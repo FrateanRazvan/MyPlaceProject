@@ -348,34 +348,33 @@ namespace MyPlace.Migrations
                     b.ToTable("Comments");
                 });
 
-            modelBuilder.Entity("MyPlace.Models.Programme", b =>
+            modelBuilder.Entity("MyPlace.Models.Rent", b =>
                 {
-                    b.Property<int>("id")
+                    b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<DateTime>("end_programme")
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("End_date")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("max_participants")
+                    b.Property<int>("Max_participants")
                         .HasColumnType("int");
 
-                    b.Property<string>("name")
+                    b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("price")
-                        .HasColumnType("float");
-
-                    b.Property<string>("room")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("start_programme")
+                    b.Property<DateTime>("Start_date")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("id");
+                    b.HasKey("ID");
 
-                    b.ToTable("Programmes");
+                    b.HasIndex("ApplicationUserId");
+
+                    b.ToTable("Rents");
                 });
 
             modelBuilder.Entity("MyPlace.Models.Room", b =>
@@ -397,6 +396,21 @@ namespace MyPlace.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Rooms");
+                });
+
+            modelBuilder.Entity("RentRoom", b =>
+                {
+                    b.Property<int>("RentsID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RoomsId")
+                        .HasColumnType("int");
+
+                    b.HasKey("RentsID", "RoomsId");
+
+                    b.HasIndex("RoomsId");
+
+                    b.ToTable("RentRoom");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -457,6 +471,35 @@ namespace MyPlace.Migrations
                         .HasForeignKey("RoomId");
 
                     b.Navigation("Room");
+                });
+
+            modelBuilder.Entity("MyPlace.Models.Rent", b =>
+                {
+                    b.HasOne("MyPlace.Models.ApplicationUser", "ApplicationUser")
+                        .WithMany("Rents")
+                        .HasForeignKey("ApplicationUserId");
+
+                    b.Navigation("ApplicationUser");
+                });
+
+            modelBuilder.Entity("RentRoom", b =>
+                {
+                    b.HasOne("MyPlace.Models.Rent", null)
+                        .WithMany()
+                        .HasForeignKey("RentsID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MyPlace.Models.Room", null)
+                        .WithMany()
+                        .HasForeignKey("RoomsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MyPlace.Models.ApplicationUser", b =>
+                {
+                    b.Navigation("Rents");
                 });
 
             modelBuilder.Entity("MyPlace.Models.Room", b =>

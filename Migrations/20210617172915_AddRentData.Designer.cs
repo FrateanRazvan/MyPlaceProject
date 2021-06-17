@@ -10,8 +10,8 @@ using MyPlace.Data;
 namespace MyPlace.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210611150923_addProgrammes")]
-    partial class addProgrammes
+    [Migration("20210617172915_AddRentData")]
+    partial class AddRentData
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -324,34 +324,95 @@ namespace MyPlace.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
-            modelBuilder.Entity("MyPlace.Models.Programme", b =>
+            modelBuilder.Entity("MyPlace.Models.Comment", b =>
                 {
-                    b.Property<int>("id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<DateTime>("end_programme")
+                    b.Property<string>("Content")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("DateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("max_participants")
+                    b.Property<int?>("RoomId")
                         .HasColumnType("int");
 
-                    b.Property<string>("name")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Stars")
+                        .HasColumnType("int");
 
-                    b.Property<double>("price")
-                        .HasColumnType("float");
+                    b.HasKey("Id");
 
-                    b.Property<string>("room")
-                        .HasColumnType("nvarchar(max)");
+                    b.HasIndex("RoomId");
 
-                    b.Property<DateTime>("start_programme")
+                    b.ToTable("Comments");
+                });
+
+            modelBuilder.Entity("MyPlace.Models.Rent", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("End_date")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("id");
+                    b.Property<int>("Max_participants")
+                        .HasColumnType("int");
 
-                    b.ToTable("programmes");
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Start_date")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("ApplicationUserId");
+
+                    b.ToTable("Rents");
+                });
+
+            modelBuilder.Entity("MyPlace.Models.Room", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("IsOcupied")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("RoomNumber")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RoomSize")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Rooms");
+                });
+
+            modelBuilder.Entity("RentRoom", b =>
+                {
+                    b.Property<int>("RentsID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RoomsId")
+                        .HasColumnType("int");
+
+                    b.HasKey("RentsID", "RoomsId");
+
+                    b.HasIndex("RoomsId");
+
+                    b.ToTable("RentRoom");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -403,6 +464,49 @@ namespace MyPlace.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("MyPlace.Models.Comment", b =>
+                {
+                    b.HasOne("MyPlace.Models.Room", "Room")
+                        .WithMany("Comments")
+                        .HasForeignKey("RoomId");
+
+                    b.Navigation("Room");
+                });
+
+            modelBuilder.Entity("MyPlace.Models.Rent", b =>
+                {
+                    b.HasOne("MyPlace.Models.ApplicationUser", "ApplicationUser")
+                        .WithMany("Rents")
+                        .HasForeignKey("ApplicationUserId");
+
+                    b.Navigation("ApplicationUser");
+                });
+
+            modelBuilder.Entity("RentRoom", b =>
+                {
+                    b.HasOne("MyPlace.Models.Rent", null)
+                        .WithMany()
+                        .HasForeignKey("RentsID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MyPlace.Models.Room", null)
+                        .WithMany()
+                        .HasForeignKey("RoomsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MyPlace.Models.ApplicationUser", b =>
+                {
+                    b.Navigation("Rents");
+                });
+
+            modelBuilder.Entity("MyPlace.Models.Room", b =>
+                {
+                    b.Navigation("Comments");
                 });
 #pragma warning restore 612, 618
         }

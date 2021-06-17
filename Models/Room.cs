@@ -12,5 +12,6 @@ namespace MyPlace.Models
         public string RoomSize { get; set; }
         public bool IsOcupied { get; set; }
         public List<Comment> Comments { get; set; }
+        public List<Rent> Rents { get; set; }
     }
 }

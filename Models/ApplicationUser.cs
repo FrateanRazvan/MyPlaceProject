@@ -8,5 +8,6 @@ namespace MyPlace.Models
 {
     public class ApplicationUser : IdentityUser
     {
+        public List<Rent> Rents { get; set; }
     }
 }
