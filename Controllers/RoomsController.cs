@@ -64,14 +64,16 @@ namespace MyPlace.Controllers
         [HttpPost("{id}/Comments")]
         public IActionResult PostCommentForRoom(int id, Comment comment)
         {
-            comment.Room = _context.Rooms.Find(id);
 
-            if(comment.Room == null)
+            var room = _context.Rooms.Where(r => r.Id == id).Include(r => r.Comments).FirstOrDefault();
+
+            if(room == null)
             {
                 return NotFound();
             }
 
-            _context.Comments.Add(comment);
+            room.Comments.Add(comment);
+            _context.Entry(room).State = EntityState.Modified;
             _context.SaveChanges();
 
             return Ok();
