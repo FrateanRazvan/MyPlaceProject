@@ -3,36 +3,23 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyPlace.Data;
 
 namespace MyPlace.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210619120605_AddBooking")]
+    partial class AddBooking
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.6")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-            modelBuilder.Entity("BookingRent", b =>
-                {
-                    b.Property<int>("bookingsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("rentsID")
-                        .HasColumnType("int");
-
-                    b.HasKey("bookingsId", "rentsID");
-
-                    b.HasIndex("rentsID");
-
-                    b.ToTable("BookingRent");
-                });
 
             modelBuilder.Entity("IdentityServer4.EntityFramework.Entities.DeviceFlowCodes", b =>
                 {
@@ -388,6 +375,9 @@ namespace MyPlace.Migrations
                     b.Property<string>("ApplicationUserId")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<int?>("BookingId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("End_date")
                         .HasColumnType("datetime2");
 
@@ -403,6 +393,8 @@ namespace MyPlace.Migrations
                     b.HasKey("ID");
 
                     b.HasIndex("ApplicationUserId");
+
+                    b.HasIndex("BookingId");
 
                     b.ToTable("Rents");
                 });
@@ -441,21 +433,6 @@ namespace MyPlace.Migrations
                     b.HasIndex("RoomsId");
 
                     b.ToTable("RentRoom");
-                });
-
-            modelBuilder.Entity("BookingRent", b =>
-                {
-                    b.HasOne("MyPlace.Models.Booking", null)
-                        .WithMany()
-                        .HasForeignKey("bookingsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MyPlace.Models.Rent", null)
-                        .WithMany()
-                        .HasForeignKey("rentsID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -524,6 +501,10 @@ namespace MyPlace.Migrations
                         .WithMany("Rents")
                         .HasForeignKey("ApplicationUserId");
 
+                    b.HasOne("MyPlace.Models.Booking", null)
+                        .WithMany("rents")
+                        .HasForeignKey("BookingId");
+
                     b.Navigation("ApplicationUser");
                 });
 
@@ -545,6 +526,11 @@ namespace MyPlace.Migrations
             modelBuilder.Entity("MyPlace.Models.ApplicationUser", b =>
                 {
                     b.Navigation("Rents");
+                });
+
+            modelBuilder.Entity("MyPlace.Models.Booking", b =>
+                {
+                    b.Navigation("rents");
                 });
 
             modelBuilder.Entity("MyPlace.Models.Room", b =>

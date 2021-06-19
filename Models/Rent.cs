@@ -15,5 +15,7 @@ namespace MyPlace.Models
         public DateTime Start_date { get; set; }
         public DateTime End_date { get; set; }
 
+        public List<Booking> bookings { get; set; }
+
     }
 }
