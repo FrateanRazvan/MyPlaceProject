@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using MyPlace.Data;
 using MyPlace.Models;
+using MyPlace.Services;
 using MyPlace.ViewModel.Authentication;
 using System;
 using System.Collections.Generic;
@@ -19,59 +20,35 @@ namespace MyPlace.Controllers
     [ApiController]
     public class AuthenticationController: ControllerBase
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly ApplicationDbContext _context;
-        private readonly IConfiguration _configuration;
-        public AuthenticationController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager,
-            ApplicationDbContext applicationDbContext, IConfiguration configuration)
+        private IAuthenticationService _authenticationService;
+        public AuthenticationController(IAuthenticationService authenticationService)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
-            _context = applicationDbContext;
-            _configuration = configuration;
+            _authenticationService = authenticationService;
         }
 
         [HttpPost]
         [Route("register")]
         public async Task<ActionResult> RegisterUser(RegisterRequest registerRequest)
         {
-            var user = new ApplicationUser
+            var registerServiceResult = await _authenticationService.RegisterUser(registerRequest);
+
+            if(registerServiceResult.ResponseError != null)
             {
-
-                Email = registerRequest.Email,
-                UserName = registerRequest.Email,
-                SecurityStamp = Guid.NewGuid().ToString()
-
-            };
-
-            var result = await _userManager.CreateAsync(user, registerRequest.Password);
-
-            if (result.Succeeded)
-            {
-                return Ok(new RegisterResponse { ConfirmationToken = user.SecurityStamp });
+                return BadRequest(registerServiceResult.ResponseError);
             }
-            return BadRequest(result.Errors);
+            else
+            {
+                return Ok(registerServiceResult.ResponseOk); 
+            }
         }
 
         [HttpPost]
         [Route("confirm")]
         public async Task<ActionResult> ConfirmUser(ConfirmUserRequest confirmUserRequest)
         {
-            var user = new ApplicationUser
+            var serviceResult = await _authenticationService.ConfirmUserRerquest(confirmUserRequest);
+            if (serviceResult)
             {
-                Email = confirmUserRequest.Email,
-                UserName = confirmUserRequest.Email
-            };
-
-            var toConfirm = _context.ApplicationUsers.Where(au => au.Email == confirmUserRequest.Email && au.SecurityStamp == confirmUserRequest.ConfirmationToken)
-                .FirstOrDefault();
-            if (toConfirm != null)
-            {
-                toConfirm.EmailConfirmed = true;
-                _context.Entry(toConfirm).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-                await _context.SaveChangesAsync();
-
                 return Ok();
             }
 
@@ -82,34 +59,10 @@ namespace MyPlace.Controllers
         [Route("login")]
         public async Task<ActionResult> Login(LoginRequest loginRequest)
         {
-            var user = await _userManager.FindByEmailAsync(loginRequest.Email);
-
-            if (user != null && await _userManager.CheckPasswordAsync(user, loginRequest.Password))
+            var serviceResult = await _authenticationService.LoginUser(loginRequest);
+            if (serviceResult.ResponseOk != null)
             {
-                var claims = new[]
-                {
-                    new Claim(JwtRegisteredClaimNames.Sub, user.UserName)
-                };
-
-                var signinKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:SigninKey"]));
-
-                int expiryInMinutes = Convert.ToInt32(_configuration["Jwt:ExpiryInMinutes"]);
-              
-                var token = new JwtSecurityToken(
-                    issuer: _configuration["Jwt:Site"],
-                    audience: _configuration["Jwt:Site"],
-                    expires: DateTime.UtcNow.AddMinutes(expiryInMinutes),
-                    signingCredentials: new SigningCredentials(signinKey, SecurityAlgorithms.HmacSha256),
-                    claims: claims
-                    );
-
-                return Ok(
-                    new
-                    {
-                        token = new JwtSecurityTokenHandler().WriteToken(token),
-                        expiration = token.ValidTo
-                    });
-
+                return Ok(serviceResult.ResponseOk);
             }
 
             return Unauthorized();

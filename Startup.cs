@@ -15,6 +15,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MyPlace.Data;
 using MyPlace.Models;
+using MyPlace.Services;
 using MyPlace.Validators;
 using MyPlace.ViewModels;
 using System;
@@ -104,6 +105,7 @@ namespace MyPlace
             });
 
             services.AddTransient<IValidator<RoomViewModel>, RoomValidator>();
+            services.AddTransient<Services.IAuthenticationService, Services.AuthenticationService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
