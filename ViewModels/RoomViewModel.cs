@@ -9,7 +9,7 @@ namespace MyPlace.ViewModels
     {
         public int Id { get; set; }
         public int RoomNumber { get; set; }
-        public string RoomSize { get; set; }
+        public double RoomSize { get; set; }
         public bool isOcupied { get; set; }
     }
 }

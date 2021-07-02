@@ -12,47 +12,47 @@ namespace MyPlace.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BookingsController : ControllerBase
+    public class BooksController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
 
-        public BookingsController(ApplicationDbContext context)
+        public BooksController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: api/Bookings
+        // GET: api/Books
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Booking>>> GetBookings()
+        public async Task<ActionResult<IEnumerable<Book>>> GetBooks()
         {
-            return await _context.Bookings.ToListAsync();
+            return await _context.Books.ToListAsync();
         }
 
-        // GET: api/Bookings/5
+        // GET: api/Books/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Booking>> GetBooking(int id)
+        public async Task<ActionResult<Book>> GetBook(int id)
         {
-            var booking = await _context.Bookings.FindAsync(id);
+            var book = await _context.Books.FindAsync(id);
 
-            if (booking == null)
+            if (book == null)
             {
                 return NotFound();
             }
 
-            return booking;
+            return book;
         }
 
-        // PUT: api/Bookings/5
+        // PUT: api/Books/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutBooking(int id, Booking booking)
+        public async Task<IActionResult> PutBook(int id, Book book)
         {
-            if (id != booking.Id)
+            if (id != book.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(booking).State = EntityState.Modified;
+            _context.Entry(book).State = EntityState.Modified;
 
             try
             {
@@ -60,7 +60,7 @@ namespace MyPlace.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!BookingExists(id))
+                if (!BookExists(id))
                 {
                     return NotFound();
                 }
@@ -73,36 +73,36 @@ namespace MyPlace.Controllers
             return NoContent();
         }
 
-        // POST: api/Bookings
+        // POST: api/Books
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Booking>> PostBooking(Booking booking)
+        public async Task<ActionResult<Book>> PostBook(Book book)
         {
-            _context.Bookings.Add(booking);
+            _context.Books.Add(book);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetBooking", new { id = booking.Id }, booking);
+            return CreatedAtAction("GetBook", new { id = book.Id }, book);
         }
 
-        // DELETE: api/Bookings/5
+        // DELETE: api/Books/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteBooking(int id)
+        public async Task<IActionResult> DeleteBook(int id)
         {
-            var booking = await _context.Bookings.FindAsync(id);
-            if (booking == null)
+            var book = await _context.Books.FindAsync(id);
+            if (book == null)
             {
                 return NotFound();
             }
 
-            _context.Bookings.Remove(booking);
+            _context.Books.Remove(book);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool BookingExists(int id)
+        private bool BookExists(int id)
         {
-            return _context.Bookings.Any(e => e.Id == id);
+            return _context.Books.Any(e => e.Id == id);
         }
     }
 }

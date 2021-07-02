@@ -15,6 +15,7 @@ namespace MyPlace
             CreateMap<Room, RoomWithCommentsViewModel>();
             CreateMap<ApplicationUser, ApplicationUserViewModel>().ReverseMap();
             CreateMap<Rent, RentsForUserResponse>().ReverseMap();
+            CreateMap<Rent, RentWithRoomsViewModel>().ReverseMap();
         }
     }
 }

@@ -17,7 +17,7 @@ namespace MyPlace.Data
         public DbSet<Comment> Comments { get; set; }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public DbSet<Rent> Rents { get; set; }
-        public DbSet<Booking> Bookings { get; set; }
+        public DbSet<Book> Books { get; set; }
         public ApplicationDbContext(
             DbContextOptions options,
             IOptions<OperationalStoreOptions> operationalStoreOptions) : base(options, operationalStoreOptions)

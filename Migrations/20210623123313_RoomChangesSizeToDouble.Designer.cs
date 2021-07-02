@@ -10,8 +10,8 @@ using MyPlace.Data;
 namespace MyPlace.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210619121247_AddBookingUpdate")]
-    partial class AddBookingUpdate
+    [Migration("20210623123313_RoomChangesSizeToDouble")]
+    partial class RoomChangesSizeToDouble
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -422,8 +422,8 @@ namespace MyPlace.Migrations
                     b.Property<int>("RoomNumber")
                         .HasColumnType("int");
 
-                    b.Property<string>("RoomSize")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<double>("RoomSize")
+                        .HasColumnType("float");
 
                     b.HasKey("Id");
 

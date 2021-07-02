@@ -96,7 +96,7 @@ namespace MyPlace
                     },
                     License = new OpenApiLicense
                     {
-                        Name = "Use under LICX",
+                        Name = "Use under LICX", 
                         Url = new Uri("https://example.com/license"),
                     }
                 });
@@ -106,6 +106,7 @@ namespace MyPlace
 
             services.AddTransient<IValidator<RoomViewModel>, RoomValidator>();
             services.AddTransient<Services.IAuthenticationService, Services.AuthenticationService>();
+            services.AddTransient<Services.IRoomService, Services.RoomService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -127,6 +128,11 @@ namespace MyPlace
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            app.UseCors(x => x
+            .AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader());
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();

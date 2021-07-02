@@ -3,18 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MyPlace.Models
+namespace MyPlace.ViewModels.Rents
 {
-    public class Rent
+    public class RentWithRoomsViewModel
     {
-        public int ID { get; set; }
-        public ApplicationUser ApplicationUser { get; set; }
-        public IEnumerable<Room> Rooms { get; set; }
+        public int id { get; set; }
         public string Name { get; set; }
         public int Max_participants { get; set; }
         public DateTime Start_date { get; set; }
         public DateTime End_date { get; set; }
-        public ICollection<Book> Books { get; set; }
-
+        public IEnumerable<RoomViewModel> Rooms { get; set; }
     }
 }
+

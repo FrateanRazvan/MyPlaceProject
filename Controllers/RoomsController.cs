@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MyPlace.Data;
 using MyPlace.Models;
+using MyPlace.Services;
 using MyPlace.ViewModels;
 
 namespace MyPlace.Controllers
@@ -20,12 +21,14 @@ namespace MyPlace.Controllers
         private readonly ApplicationDbContext _context;
         private readonly ILogger<RoomsController> _logger;
         private readonly IMapper _mapper;
+        private readonly RoomService _roomService;
 
-        public RoomsController(ApplicationDbContext context, ILogger<RoomsController> logger, IMapper mapper)
+        public RoomsController(ApplicationDbContext context, ILogger<RoomsController> logger, IMapper mapper, RoomService roomService)
         {
             _context = context;
             _logger = logger;
             _mapper = mapper;
+            _roomService = roomService;
         }
 
         // GET: api/Rooms
@@ -33,6 +36,15 @@ namespace MyPlace.Controllers
         public async Task<ActionResult<IEnumerable<Room>>> GetRooms()
         {
             return await _context.Rooms.ToListAsync();
+
+            
+        }
+
+        [HttpGet]
+        [Route("filter/maxSize={maxSize}")]
+        public async Task<ActionResult<IEnumerable<Room>>> GetAllRoomsByMaxSize(int maxSize)
+        {
+            return await _context.Rooms.Where(r => r.RoomSize <= maxSize).ToListAsync();
         }
 
         // GET: api/Rooms/5

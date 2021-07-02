@@ -19,21 +19,6 @@ namespace MyPlace.Migrations
                 .HasAnnotation("ProductVersion", "5.0.6")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("BookingRent", b =>
-                {
-                    b.Property<int>("bookingsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("rentsID")
-                        .HasColumnType("int");
-
-                    b.HasKey("bookingsId", "rentsID");
-
-                    b.HasIndex("rentsID");
-
-                    b.ToTable("BookingRent");
-                });
-
             modelBuilder.Entity("IdentityServer4.EntityFramework.Entities.DeviceFlowCodes", b =>
                 {
                     b.Property<string>("UserCode")
@@ -337,19 +322,27 @@ namespace MyPlace.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
-            modelBuilder.Entity("MyPlace.Models.Booking", b =>
+            modelBuilder.Entity("MyPlace.Models.Book", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<DateTime>("BookingDateTime")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("RentId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
-                    b.ToTable("Bookings");
+                    b.HasIndex("RentId");
+
+                    b.ToTable("Books");
                 });
 
             modelBuilder.Entity("MyPlace.Models.Comment", b =>
@@ -420,8 +413,8 @@ namespace MyPlace.Migrations
                     b.Property<int>("RoomNumber")
                         .HasColumnType("int");
 
-                    b.Property<string>("RoomSize")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<double>("RoomSize")
+                        .HasColumnType("float");
 
                     b.HasKey("Id");
 
@@ -441,21 +434,6 @@ namespace MyPlace.Migrations
                     b.HasIndex("RoomsId");
 
                     b.ToTable("RentRoom");
-                });
-
-            modelBuilder.Entity("BookingRent", b =>
-                {
-                    b.HasOne("MyPlace.Models.Booking", null)
-                        .WithMany()
-                        .HasForeignKey("bookingsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MyPlace.Models.Rent", null)
-                        .WithMany()
-                        .HasForeignKey("rentsID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -509,6 +487,15 @@ namespace MyPlace.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("MyPlace.Models.Book", b =>
+                {
+                    b.HasOne("MyPlace.Models.Rent", "Rent")
+                        .WithMany("Books")
+                        .HasForeignKey("RentId");
+
+                    b.Navigation("Rent");
+                });
+
             modelBuilder.Entity("MyPlace.Models.Comment", b =>
                 {
                     b.HasOne("MyPlace.Models.Room", "Room")
@@ -545,6 +532,11 @@ namespace MyPlace.Migrations
             modelBuilder.Entity("MyPlace.Models.ApplicationUser", b =>
                 {
                     b.Navigation("Rents");
+                });
+
+            modelBuilder.Entity("MyPlace.Models.Rent", b =>
+                {
+                    b.Navigation("Books");
                 });
 
             modelBuilder.Entity("MyPlace.Models.Room", b =>

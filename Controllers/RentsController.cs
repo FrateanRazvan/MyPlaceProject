@@ -36,7 +36,25 @@ namespace MyPlace.Controllers
 
         // GET: api/Rents
         [HttpGet]
-        public async Task<ActionResult> GetRents()
+        public async Task<ActionResult<IEnumerable<Rent>>> GetAllRents()
+        {
+            var result = await _context.Rents.ToListAsync();
+            return Ok(result);
+        }
+
+        // GET: api/Rents/"Tango"
+        [HttpGet]
+        [Route("filter/name={programme}")]
+        public ActionResult<IEnumerable<RentWithRoomsViewModel>> GetAllRentsOfName(string programme)
+        {
+            var query =  _context.Rents.Where(r => r.Name == programme).Include(r => r.Rooms).Select(r => _mapper.Map<RentWithRoomsViewModel>(r));
+            
+            return query.ToList();
+        }
+
+        // GET: api/UserRents
+        [HttpGet("user")]
+        public async Task<ActionResult> GetRentsForUSer()
         {
             var user = await _userManager.FindByNameAsync(User.FindFirst(ClaimTypes.NameIdentifier).Value);
 

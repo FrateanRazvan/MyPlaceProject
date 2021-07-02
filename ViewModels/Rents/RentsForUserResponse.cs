@@ -14,5 +14,6 @@ namespace MyPlace.ViewModels.Rents
         public int Max_participants { get; set; }
         public DateTime Start_date { get; set; }
         public DateTime End_date { get; set; }
+        
     }
 }

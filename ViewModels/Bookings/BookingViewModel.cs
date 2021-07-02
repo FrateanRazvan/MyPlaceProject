@@ -1,15 +1,15 @@
-﻿using System;
+﻿using MyPlace.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MyPlace.Models
+namespace MyPlace.ViewModels
 {
-    public class Booking
+    public class BookingViewModel
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public List<Rent> rents { get; set; }
-
+        public IEnumerable<Rent> Rents { get; set; }
     }
 }

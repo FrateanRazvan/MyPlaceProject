@@ -9,7 +9,7 @@ namespace MyPlace.Models
     {
         public int Id { get; set; }
         public int RoomNumber { get; set; }
-        public string RoomSize { get; set; }
+        public double RoomSize { get; set; }
         public bool IsOcupied { get; set; }
         public List<Comment> Comments { get; set; }
         public List<Rent> Rents { get; set; }

@@ -12,7 +12,7 @@ namespace MyPlace.Validators
     { 
         public RoomValidator()
         {
-            RuleFor(x => x.RoomSize).MinimumLength(4);
+            
             RuleFor(x => x.RoomNumber).InclusiveBetween(1, 12);
         }
     }
