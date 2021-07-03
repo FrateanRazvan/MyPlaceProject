@@ -28,6 +28,13 @@ namespace MyPlace.Controllers
             return await _context.Books.ToListAsync();
         }
 
+        [HttpGet]
+        [Route("filter/progId={progId}")]
+        public async Task<ActionResult<IEnumerable<Book>>> GetAllBooksByProgrammeId(int progId)
+        {
+            return await _context.Books.Where(book => book.RentId == progId).ToListAsync();
+        }
+
         // GET: api/Books/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Book>> GetBook(int id)

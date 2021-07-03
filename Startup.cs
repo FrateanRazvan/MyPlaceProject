@@ -106,7 +106,7 @@ namespace MyPlace
 
             services.AddTransient<IValidator<RoomViewModel>, RoomValidator>();
             services.AddTransient<Services.IAuthenticationService, Services.AuthenticationService>();
-            services.AddTransient<Services.IRoomService, Services.RoomService>();
+            services.AddTransient<RoomService, RoomService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

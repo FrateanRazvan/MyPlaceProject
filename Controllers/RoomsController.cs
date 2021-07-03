@@ -36,8 +36,7 @@ namespace MyPlace.Controllers
         public async Task<ActionResult<IEnumerable<Room>>> GetRooms()
         {
             return await _context.Rooms.ToListAsync();
-
-            
+ 
         }
 
         [HttpGet]
